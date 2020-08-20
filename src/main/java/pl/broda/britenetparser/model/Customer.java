@@ -1,26 +1,40 @@
 package pl.broda.britenetparser.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
+
+@XmlRootElement(name = "person")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Customer {
 
     private Integer id;
     private String name;
     private String surname;
     private Integer age;
+    @XmlElement(name = "contacts")
+    private Contact contacts;
 
-    public Customer() {}
+    public Customer() {
+    }
 
-    public Customer(Integer id, String name, String surname, Integer age) {
+    public Customer(Integer id, String name, String surname, Integer age, Contact contacts) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.age = age;
+        this.contacts = contacts;
     }
 
-    public Customer(String name, String surname, Integer age) {
+    public Customer(String name, String surname, Integer age, Contact contacts) {
         this.name = name;
         this.surname = surname;
         this.age = age;
+        this.contacts = contacts;
     }
+
 
     public Integer getId() {
         return id;
@@ -54,13 +68,22 @@ public class Customer {
         this.age = age;
     }
 
+    public Contact getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Contact contacts) {
+        this.contacts = contacts;
+    }
+
     @Override
     public String toString() {
-        return "Customer{" +
+        return "Customer{\n" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", age=" + age +
-                '}';
+                "\n, name='" + name + '\'' +
+                "\n, surname='" + surname + '\'' +
+                "\n, age=" + age +
+                "\n, contacts=" + contacts.toString() +
+                "\n}";
     }
 }

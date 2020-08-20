@@ -11,13 +11,11 @@ import java.sql.SQLException;
 public class ContactRowMapper implements RowMapper<Contact> {
     @Override
     public Contact mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Contact contact = new Contact();
+//        Contact contact = new Contact();
 
-        contact.setId(rs.getInt("id"));
-        contact.setIdCustomer(rs.getInt("id_customer"));
-        contact.setType(rs.getInt("type"));
-        contact.setContact(rs.getString("contact"));
+//        contact.setType(rs.getString("type"));
+//        contact.setContent(rs.getString("contact"));
 
-        return contact;
+        return null;
     }
 }
