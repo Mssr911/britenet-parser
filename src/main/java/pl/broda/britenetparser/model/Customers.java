@@ -30,7 +30,7 @@ public class Customers {
     @Override
     public String toString() {
         return "Customers{ \n" +
-                "customerList= \n" + customerList.toString() +
+                "customerList= \n" + customerList +
                 "\n}";
     }
 }

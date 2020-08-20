@@ -3,6 +3,7 @@ package pl.broda.britenetparser.model;
 import org.w3c.dom.Element;
 
 import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name = "contacts")
@@ -16,20 +17,29 @@ public class Contact {
     private List<String> email;
     private List<String> phone;
     private List<String> jabber;
-    @XmlAnyElement
-    private List<Element> otherContact;
+    @XmlAnyElement(lax = true)
+    private List<Object> otherContact;
+    @XmlTransient
+    private List<String> otherContactValues;
 
     public Contact() {
+        this.email = new ArrayList<>();
+        this.phone = new ArrayList<>();
+        this.jabber = new ArrayList<>();
+        this.otherContact = new ArrayList<>();
+        this.otherContactValues = new ArrayList<>();
     }
 
-    public Contact(int idCustomer, List<String> email, List<String> phone, List<String> jabber, List<Element> otherContact) {
+    public Contact(int idCustomer, List<String> email, List<String> phone, List<String> jabber, List<Object> otherContact) {
         this.idCustomer = idCustomer;
         this.email = email;
         this.phone = phone;
         this.jabber = jabber;
         this.otherContact = otherContact;
+        this.otherContactValues = getOtherContactsAsStrings(otherContact);
     }
 
+    //    JABBER
     public List<String> getJabber() {
         return jabber;
     }
@@ -42,6 +52,11 @@ public class Contact {
         this.jabber.add(jabber);
     }
 
+    public void addJabberList(List<String> jabber) {
+        this.jabber.addAll(jabber);
+    }
+
+    //    ID
     public int getId() {
         return id;
     }
@@ -50,6 +65,7 @@ public class Contact {
         this.id = id;
     }
 
+    //    ID_CUSTOMER
     public int getIdCustomer() {
         return idCustomer;
     }
@@ -58,26 +74,24 @@ public class Contact {
         this.idCustomer = idCustomer;
     }
 
+    //    EMAIL
     public List<String> getEmail() {
         return email;
-    }
-
-    public void addEmail(String email) {
-        this.email.add(email);
-    }
-
-    public List<Element> getOtherContact() {
-        return otherContact;
-    }
-
-    public void setOtherContact(List<Element> otherContact) {
-        this.otherContact = otherContact;
     }
 
     public void setEmail(List<String> email) {
         this.email = email;
     }
 
+    public void addEmail(String email) {
+        this.email.add(email);
+    }
+
+    public void addEmailList(List<String> emails) {
+        this.email.addAll(emails);
+    }
+
+    //    PHONE
     public List<String> getPhone() {
         return phone;
     }
@@ -86,8 +100,45 @@ public class Contact {
         this.phone = phone;
     }
 
-    public void addPhone(String phone) {
-        this.phone.add(phone);
+    public void addPhone(String phoneNumber) {
+        this.phone.add(phoneNumber);
+    }
+
+    public void addPhoneList(List<String> phones) {
+        this.phone.addAll(phones);
+    }
+
+    //    OTHER CONTACTS
+    public List<Object> getOtherContact() {
+        return otherContact;
+    }
+
+    public void setOtherContact(List<Object> otherContact) {
+        this.otherContact = otherContact;
+        this.otherContactValues = getOtherContactsAsStrings(otherContact);
+    }
+
+    public void addOtherContactList(List<Object> newContacts) {
+        this.otherContact.addAll(newContacts);
+        this.otherContactValues.addAll(getOtherContactsAsStrings(newContacts));
+    }
+
+    public void addSingleOtherContactValue(String newContact) {
+        this.otherContactValues.add(newContact);
+
+    }
+
+    private List<String> getOtherContactsAsStrings(List<Object> contactObject) {
+        List<String> contactsStringList = new ArrayList<>();
+        for (Object contact : contactObject) {
+            Element contactElement = (Element) contact;
+            contactsStringList.add(contactElement.getTextContent());
+        }
+        return contactsStringList;
+    }
+
+    public List<String> getOtherContactValues() {
+        return otherContactValues;
     }
 
     @Override
@@ -95,8 +146,8 @@ public class Contact {
         return "Contact{\n" +
                 "email=" + email +
                 "\n, phone=" + phone +
-                "\n, jabber" + jabber +
-                "\n, otherContacts=" + otherContact +
+                "\n, jabber=" + jabber +
+                "\n, otherContacts=" + otherContactValues +
                 "\n}";
     }
 }

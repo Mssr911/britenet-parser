@@ -18,6 +18,7 @@ public class Customer {
     private Contact contacts;
 
     public Customer() {
+        this.contacts = new Contact();
     }
 
     public Customer(Integer id, String name, String surname, Integer age, Contact contacts) {
@@ -76,6 +77,13 @@ public class Customer {
         this.contacts = contacts;
     }
 
+//    public void addContacts(Contact newContact) {
+//        this.contacts.addEmailList(newContact.getEmail());
+//        this.contacts.addPhoneList(newContact.getPhone());
+//        this.contacts.addJabberList(newContact.getJabber());
+//        this.contacts.addOtherContactList(newContact.getOtherContact());
+//    }
+
     @Override
     public String toString() {
         return "Customer{\n" +
@@ -83,7 +91,7 @@ public class Customer {
                 "\n, name='" + name + '\'' +
                 "\n, surname='" + surname + '\'' +
                 "\n, age=" + age +
-                "\n, contacts=" + contacts.toString() +
+                "\n, contacts=" + contacts +
                 "\n}";
     }
 }
