@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
 
 @XmlRootElement(name = "person")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,13 +75,6 @@ public class Customer {
     public void setContacts(Contact contacts) {
         this.contacts = contacts;
     }
-
-//    public void addContacts(Contact newContact) {
-//        this.contacts.addEmailList(newContact.getEmail());
-//        this.contacts.addPhoneList(newContact.getPhone());
-//        this.contacts.addJabberList(newContact.getJabber());
-//        this.contacts.addOtherContactList(newContact.getOtherContact());
-//    }
 
     @Override
     public String toString() {

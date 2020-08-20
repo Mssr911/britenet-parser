@@ -3,151 +3,106 @@ package pl.broda.britenetparser.model;
 import org.w3c.dom.Element;
 
 import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @XmlRootElement(name = "contacts")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Contact {
+    @XmlTransient
+    private Integer id;
+    @XmlTransient
+    private Integer idCustomer;
 
-    @XmlTransient
-    private int id;
-    @XmlTransient
-    private int idCustomer;
-    private List<String> email;
-    private List<String> phone;
-    private List<String> jabber;
     @XmlAnyElement(lax = true)
-    private List<Object> otherContact;
-    @XmlTransient
-    private List<String> otherContactValues;
+    private List<Object> content;
+
+    public Contact(Integer idCustomer, List<Object> content) {
+        this.idCustomer = idCustomer;
+        this.content = content;
+    }
 
     public Contact() {
-        this.email = new ArrayList<>();
-        this.phone = new ArrayList<>();
-        this.jabber = new ArrayList<>();
-        this.otherContact = new ArrayList<>();
-        this.otherContactValues = new ArrayList<>();
+        this.csvContent = new ArrayList<>();
     }
 
-    public Contact(int idCustomer, List<String> email, List<String> phone, List<String> jabber, List<Object> otherContact) {
-        this.idCustomer = idCustomer;
-        this.email = email;
-        this.phone = phone;
-        this.jabber = jabber;
-        this.otherContact = otherContact;
-        this.otherContactValues = getOtherContactsAsStrings(otherContact);
-    }
-
-    //    JABBER
-    public List<String> getJabber() {
-        return jabber;
-    }
-
-    public void setJabber(List<String> jabber) {
-        this.jabber = jabber;
-    }
-
-    public void addJabber(String jabber) {
-        this.jabber.add(jabber);
-    }
-
-    public void addJabberList(List<String> jabber) {
-        this.jabber.addAll(jabber);
-    }
-
-    //    ID
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    //    ID_CUSTOMER
-    public int getIdCustomer() {
+    public Integer getIdCustomer() {
         return idCustomer;
     }
 
-    public void setIdCustomer(int idCustomer) {
+    public void setIdCustomer(Integer idCustomer) {
         this.idCustomer = idCustomer;
     }
 
-    //    EMAIL
-    public List<String> getEmail() {
-        return email;
+    public List<Object> getContent() {
+        return content;
     }
 
-    public void setEmail(List<String> email) {
-        this.email = email;
+    public void setContent(List<Object> content) {
+        this.content = content;
     }
 
-    public void addEmail(String email) {
-        this.email.add(email);
+
+//    ONLY FOR CSV PARSER
+    private List<String[]> csvContent;
+
+    public List<String[]> getCsvContent() {
+        return csvContent;
     }
 
-    public void addEmailList(List<String> emails) {
-        this.email.addAll(emails);
+    public void setCsvContent(List<String[]> csvContent) {
+        this.csvContent = csvContent;
     }
 
-    //    PHONE
-    public List<String> getPhone() {
-        return phone;
+    public void addCsvContent(String[] contact) {
+        this.csvContent.add(contact);
     }
 
-    public void setPhone(List<String> phone) {
-        this.phone = phone;
-    }
 
-    public void addPhone(String phoneNumber) {
-        this.phone.add(phoneNumber);
-    }
 
-    public void addPhoneList(List<String> phones) {
-        this.phone.addAll(phones);
-    }
 
-    //    OTHER CONTACTS
-    public List<Object> getOtherContact() {
-        return otherContact;
-    }
 
-    public void setOtherContact(List<Object> otherContact) {
-        this.otherContact = otherContact;
-        this.otherContactValues = getOtherContactsAsStrings(otherContact);
-    }
 
-    public void addOtherContactList(List<Object> newContacts) {
-        this.otherContact.addAll(newContacts);
-        this.otherContactValues.addAll(getOtherContactsAsStrings(newContacts));
-    }
 
-    public void addSingleOtherContactValue(String newContact) {
-        this.otherContactValues.add(newContact);
-
-    }
-
-    private List<String> getOtherContactsAsStrings(List<Object> contactObject) {
-        List<String> contactsStringList = new ArrayList<>();
-        for (Object contact : contactObject) {
-            Element contactElement = (Element) contact;
-            contactsStringList.add(contactElement.getTextContent());
+    private List<String[]> transformContent(List<Object> list) {
+        List<String[]> newList = new ArrayList<>();
+        for (Object o : list) {
+            Element element = (Element) o;
+            newList.add(new String[]{element.getTagName(), element.getTextContent()});
         }
-        return contactsStringList;
+        return newList;
     }
 
-    public List<String> getOtherContactValues() {
-        return otherContactValues;
+    private List<String> writeContent(List<Object> list) {
+        List<String> newList = new ArrayList<>();
+        for (Object o : list) {
+            Element element = (Element) o;
+            newList.add(element.getTagName() + " - " + element.getTextContent() + "\n");
+        }
+        return newList;
+    }
+
+    private List<String> writeCsvContent(List<String[]> list) {
+        List<String> newList = new ArrayList<>();
+        for (String[] o : list) {
+            newList.add(o[0] + " - " + o[1] + "\n");
+        }
+        return newList;
     }
 
     @Override
     public String toString() {
-        return "Contact{\n" +
-                "email=" + email +
-                "\n, phone=" + phone +
-                "\n, jabber=" + jabber +
-                "\n, otherContacts=" + otherContactValues +
-                "\n}";
+        return "SimpleContact{" +
+                "content=" +
+//                writeCsvContent(csvContent) +
+                writeContent(content) +
+                '}';
     }
 }

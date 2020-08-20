@@ -1,9 +1,9 @@
 package pl.broda.britenetparser.service;
 
 import org.springframework.stereotype.Service;
-import pl.broda.britenetparser.model.Contact;
 import pl.broda.britenetparser.model.Customer;
 import pl.broda.britenetparser.model.Customers;
+import pl.broda.britenetparser.model.Contact;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,12 +39,12 @@ public class CsvParser {
                     String tempPersonContact = person[i].replace(" ", "");
 
                     if (!tempPersonContact.contains("@") && tempPersonContact.length() == 9) {
-                        newContact.addPhone(verifyPhoneNumber(tempPersonContact));
-                    } else if (tempPersonContact.contains("@jabber")) {
-                        newContact.addJabber(tempPersonContact);
+                        newContact.addCsvContent(new String[]{"phone", verifyPhoneNumber(tempPersonContact)});
+                    } else if (tempPersonContact.contains("jbr")) {
+                        newContact.addCsvContent(new String[]{"jabber", tempPersonContact});
                     } else if (tempPersonContact.contains("@") && !person[i].contains("@jabber")) {
-                        newContact.addEmail(tempPersonContact);
-                    } else newContact.addSingleOtherContactValue(tempPersonContact);
+                        newContact.addCsvContent(new String[]{"email", tempPersonContact});
+                    } else newContact.addCsvContent(new String[]{"unknown", tempPersonContact});
                 }
                 newCustomer.setContacts(newContact);
                 customerList.add(newCustomer);

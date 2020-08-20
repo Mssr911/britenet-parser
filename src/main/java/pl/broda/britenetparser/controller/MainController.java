@@ -1,10 +1,8 @@
 package pl.broda.britenetparser.controller;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.w3c.dom.Element;
-import pl.broda.britenetparser.model.Contact;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pl.broda.britenetparser.model.Customer;
 import pl.broda.britenetparser.service.CsvParser;
 import pl.broda.britenetparser.service.XmlParser;
@@ -37,22 +35,24 @@ public class MainController {
     }
 
     @GetMapping("/xmlparsertest")
+    @ResponseBody
     public String xmlParserTest() {
         return xmlParser.parseXml("/Users/marianbroda/Downloads/britenet-parser/src/main/resources/static/dane-osoby.xml").toString();
     }
 
     @GetMapping("/csvparsertest")
+    @ResponseBody
     public String csvParserTest() {
         return csvParser.parseCsv("/Users/marianbroda/Downloads/britenet-parser/src/main/resources/static/dane-osoby.txt").toString();
     }
 
-    @GetMapping("/calyhuj")
-    public String calyhuj() {
-        Customer customer = new Customer();
-        Contact huj = new Contact();
-        huj.addSingleOtherContactValue("pizdeczka");
-        huj.addEmail("psitka@dupka.com");
-        customer.setContacts(huj);
-        return customer.toString();
+    @GetMapping("/upload")
+    public String uploadPage() {
+        return "upload";
+    }
+
+    @PostMapping(value = "/upload")
+    public String uploadSimple(@RequestBody MultipartFile file) {
+        return "newUsers";
     }
 }
