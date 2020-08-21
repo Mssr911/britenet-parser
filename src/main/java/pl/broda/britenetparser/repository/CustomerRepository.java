@@ -9,25 +9,23 @@ import org.w3c.dom.Element;
 import pl.broda.britenetparser.model.Contact;
 import pl.broda.britenetparser.model.Customer;
 import pl.broda.britenetparser.model.Customers;
-import pl.broda.britenetparser.utils.CustomerRowMapper;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class CustomerRepository {
 
     JdbcTemplate jdbcTemplate;
-    CustomerRowMapper customerRowMapper;
 
-    public CustomerRepository(CustomerRowMapper customerRowMapper, JdbcTemplate jdbcTemplate) {
-        this.customerRowMapper = customerRowMapper;
+    public CustomerRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    //    INSERT SINGLE CUSTOMER AND RETURN HIS ID
     public int insertCustomer(Customer customer) {
         String sql = "insert into CUSTOMERS (name, surname, age) " + "values(?,  ?, ?)";
 
@@ -38,7 +36,7 @@ public class CustomerRepository {
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, customer.getName());
             ps.setString(2, customer.getSurname());
-            if(customer.getAge() != null) {
+            if (customer.getAge() != null) {
                 ps.setInt(3, customer.getAge());
             } else {
                 ps.setNull(3, 1);
@@ -49,34 +47,8 @@ public class CustomerRepository {
         return Objects.requireNonNull(holder.getKey()).intValue();
     }
 
-    public void insertCustomerList(final List<Customer> customerList) {
-
-        String query = "INSERT INTO "
-                + "CUSTOMERS "
-                + "(name,surname,age) "
-                + "VALUES " + "(?,?,?)";
-
-        jdbcTemplate.batchUpdate(query, new BatchPreparedStatementSetter() {
-
-            @Override
-            public void setValues(PreparedStatement ps, int i)
-                    throws SQLException {
-
-                Customer customer = customerList.get(i);
-                ps.setString(1, customer.getName());
-                ps.setString(2, customer.getSurname());
-                ps.setInt(3, customer.getAge());
-
-            }
-
-            @Override
-            public int getBatchSize() {
-                return customerList.size();
-            }
-        });
-
-    }
-
+    //    INSERT ALL CONTACTS DECLARED FOR SINGLE CUSTOMER.
+    //    METHOD WORKS ONLY WITH XML PARSER
     public void insertContactforXml(Contact contacts, Integer customerId) {
 
         String query = "INSERT INTO "
@@ -93,7 +65,8 @@ public class CustomerRepository {
                 Object newContact = contacts.getContent().get(i);
                 Element element = (Element) newContact;
                 ps.setInt(1, customerId);
-                ps.setString(2, element.getTagName());
+                ps.setInt(2, Optional.ofNullable(Contact.CONTACT_TYPES.get(element.getTagName()))
+                        .orElse(0));
                 ps.setString(3, element.getTextContent());
 
             }
@@ -106,6 +79,8 @@ public class CustomerRepository {
 
     }
 
+    //    INSERT ALL CONTACTS DECLARED FOR SINGLE CUSTOMER.
+    //    METHOD WORKS ONLY WITH CSV PARSER
     public void insertContactforCsv(Contact contacts, Integer customerId) {
 
         String query = "INSERT INTO "
@@ -134,11 +109,15 @@ public class CustomerRepository {
 
     }
 
+    //    CHECH WHICH INSERT METHOD SHOULD BE USED AND INSERT ALL GIVEN CUSTOMERS
     public void insertCustomers(Customers customers) {
         for (Customer customer : customers.getCustomerList()) {
             int id = insertCustomer(customer);
-            insertContactforXml(customer.getContacts(), id);
-            insertContactforCsv(customer.getContacts(), id);
+            if (customer.getContacts().getCsvContent().isEmpty()) {
+                insertContactforXml(customer.getContacts(), id);
+            } else if (!customer.getContacts().getCsvContent().isEmpty()) {
+                insertContactforCsv(customer.getContacts(), id);
+            }
 
         }
     }

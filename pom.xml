@@ -50,31 +50,36 @@
         </dependency>
 
 <!--        JAXB         -->
-        <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
             <version>1.1.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
             <version>2.3.2</version>
         </dependency>
-
+<!--        ONLY FOR UPLOAD TEMPLATE        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+<!--          LOGGER         -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+
 
 
     </dependencies>

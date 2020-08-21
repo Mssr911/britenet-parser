@@ -1,5 +1,7 @@
 package pl.broda.britenetparser.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.broda.britenetparser.model.Customer;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @Service
 public class CsvParser {
+
+    protected final Logger log = LoggerFactory.getLogger(CsvParser.class);
 
 
     public Customers parseCsv(MultipartFile file) {
@@ -36,6 +40,7 @@ public class CsvParser {
                 if (!tempPersonContact.contains("@") && tempPersonContact.length() == 9) {
                     newContact.addCsvContent(new String[]{"2", verifyPhoneNumber(tempPersonContact)});
                 } else if (tempPersonContact.contains("jbr")) {
+//                    I DIDN'T KNOW HOW JABBER ID LOOKS LIKE SO I ASSUMED IT SHOULD CONTAIN JBR AS IN THE GIVEN EXAMPLE
                     newContact.addCsvContent(new String[]{"3", tempPersonContact});
                 } else if (tempPersonContact.contains("@") && !person[i].contains("@jabber")) {
                     newContact.addCsvContent(new String[]{"1", tempPersonContact});
@@ -48,10 +53,10 @@ public class CsvParser {
     }
 
     public List<String> fileToList(MultipartFile file) {
+//        CONVERT FILE TO LIST OF STRINGS
         BufferedReader br;
         List<String> result = new ArrayList<>();
         try {
-
             String line;
             InputStream is = file.getInputStream();
             br = new BufferedReader(new InputStreamReader(is));
@@ -60,7 +65,7 @@ public class CsvParser {
             }
 
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            log.error("Failed attempt to read from file {}", file.getOriginalFilename());
         }
 
         return result;
@@ -71,7 +76,7 @@ public class CsvParser {
             Integer.parseInt(number);
             return number;
         } catch (NumberFormatException e) {
-//    TODO: LOGGER
+            log.error("Given value is not a number: {}", number);
         }
         return null;
     }

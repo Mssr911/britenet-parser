@@ -17,9 +17,9 @@ public class FileService {
 
     public Customers parseDocument(MultipartFile file) {
 
-        if(getFileExtension(file).equals("xml")) {
+        if (getFileExtension(file).equals("xml")) {
             return xmlParser.parseXml(file);
-        } else if(getFileExtension(file).equals("csv")){
+        } else if (getFileExtension(file).equals("csv")) {
             return csvParser.parseCsv(file);
         }
         return null;
@@ -27,6 +27,7 @@ public class FileService {
 
     public String getFileExtension(MultipartFile file) {
         String filename = file.getOriginalFilename();
+        assert filename != null;
         return filename.substring(filename.lastIndexOf(".") + 1);
     }
 

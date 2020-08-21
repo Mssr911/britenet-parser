@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Customer {
 
-    private Integer id;
     private String name;
     private String surname;
     private Integer age;
@@ -18,30 +17,6 @@ public class Customer {
 
     public Customer() {
         this.contacts = new Contact();
-    }
-
-    public Customer(Integer id, String name, String surname, Integer age, Contact contacts) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.age = age;
-        this.contacts = contacts;
-    }
-
-    public Customer(String name, String surname, Integer age, Contact contacts) {
-        this.name = name;
-        this.surname = surname;
-        this.age = age;
-        this.contacts = contacts;
-    }
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -74,16 +49,5 @@ public class Customer {
 
     public void setContacts(Contact contacts) {
         this.contacts = contacts;
-    }
-
-    @Override
-    public String toString() {
-        return "Customer{\n" +
-                "id=" + id +
-                "\n, name='" + name + '\'' +
-                "\n, surname='" + surname + '\'' +
-                "\n, age=" + age +
-                "\n, contacts=" + contacts +
-                "\n}";
     }
 }

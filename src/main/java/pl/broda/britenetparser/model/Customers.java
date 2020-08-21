@@ -14,17 +14,15 @@ public class Customers {
         this.customerList = customerList;
     }
 
-    public Customers() {}
+    //    REQUIRED FOR JAXB
+    public Customers() {
+    }
 
     @XmlElement(name = "person")
     List<Customer> customerList;
 
     public List<Customer> getCustomerList() {
         return customerList;
-    }
-
-    public void setCustomerList(List<Customer> customerList) {
-        this.customerList = customerList;
     }
 
     @Override
