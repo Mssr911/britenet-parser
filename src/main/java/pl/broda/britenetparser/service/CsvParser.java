@@ -1,62 +1,69 @@
 package pl.broda.britenetparser.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pl.broda.britenetparser.model.Customer;
 import pl.broda.britenetparser.model.Customers;
 import pl.broda.britenetparser.model.Contact;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 @Service
 public class CsvParser {
 
 
-    public Customers parseCsv(String fileName) {
+    public Customers parseCsv(MultipartFile file) {
 
-        File file = new File(fileName);
         List<Customer> customerList = new ArrayList<>();
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                String data = scanner.nextLine();
-                String[] person = data.split(",");
-                Customer newCustomer = new Customer();
-                Contact newContact = new Contact();
+        List<String> personList = fileToList(file);
+        for (String line : personList) {
+            String[] person = line.split(",");
+            Customer newCustomer = new Customer();
+            Contact newContact = new Contact();
 
-                newCustomer.setName(person[0]);
-                newCustomer.setSurname(person[1]);
-                if (!person[2].isEmpty()) {
-                    newCustomer.setAge(Integer.valueOf(person[2]));
-                }
-
-                for (int i = 4; i < person.length; i++) {
-
-                    String tempPersonContact = person[i].replace(" ", "");
-
-                    if (!tempPersonContact.contains("@") && tempPersonContact.length() == 9) {
-                        newContact.addCsvContent(new String[]{"phone", verifyPhoneNumber(tempPersonContact)});
-                    } else if (tempPersonContact.contains("jbr")) {
-                        newContact.addCsvContent(new String[]{"jabber", tempPersonContact});
-                    } else if (tempPersonContact.contains("@") && !person[i].contains("@jabber")) {
-                        newContact.addCsvContent(new String[]{"email", tempPersonContact});
-                    } else newContact.addCsvContent(new String[]{"unknown", tempPersonContact});
-                }
-                newCustomer.setContacts(newContact);
-                customerList.add(newCustomer);
+            newCustomer.setName(person[0]);
+            newCustomer.setSurname(person[1]);
+            if (!person[2].isEmpty()) {
+                newCustomer.setAge(Integer.valueOf(person[2]));
             }
-            return new Customers(customerList);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            assert scanner != null;
-            scanner.close();
+
+            for (int i = 4; i < person.length; i++) {
+
+                String tempPersonContact = person[i].replace(" ", "");
+
+                if (!tempPersonContact.contains("@") && tempPersonContact.length() == 9) {
+                    newContact.addCsvContent(new String[]{"2", verifyPhoneNumber(tempPersonContact)});
+                } else if (tempPersonContact.contains("jbr")) {
+                    newContact.addCsvContent(new String[]{"3", tempPersonContact});
+                } else if (tempPersonContact.contains("@") && !person[i].contains("@jabber")) {
+                    newContact.addCsvContent(new String[]{"1", tempPersonContact});
+                } else newContact.addCsvContent(new String[]{"0", tempPersonContact});
+            }
+            newCustomer.setContacts(newContact);
+            customerList.add(newCustomer);
         }
-        return null;
+        return new Customers(customerList);
+    }
+
+    public List<String> fileToList(MultipartFile file) {
+        BufferedReader br;
+        List<String> result = new ArrayList<>();
+        try {
+
+            String line;
+            InputStream is = file.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                result.add(line);
+            }
+
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return result;
     }
 
     private String verifyPhoneNumber(String number) {

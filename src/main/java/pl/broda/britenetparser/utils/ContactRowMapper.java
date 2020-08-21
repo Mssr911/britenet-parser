@@ -2,6 +2,7 @@ package pl.broda.britenetparser.utils;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import pl.broda.britenetparser.model.Contact;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

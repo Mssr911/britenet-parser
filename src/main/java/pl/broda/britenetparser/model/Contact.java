@@ -14,7 +14,7 @@ public class Contact {
     private Integer idCustomer;
 
     @XmlAnyElement(lax = true)
-    private List<Object> content;
+    private List<Object> content = new ArrayList<>();
 
     public Contact(Integer idCustomer, List<Object> content) {
         this.idCustomer = idCustomer;
@@ -22,7 +22,6 @@ public class Contact {
     }
 
     public Contact() {
-        this.csvContent = new ArrayList<>();
     }
 
     public Integer getId() {
@@ -51,7 +50,7 @@ public class Contact {
 
 
 //    ONLY FOR CSV PARSER
-    private List<String[]> csvContent;
+    private List<String[]> csvContent = new ArrayList<>();
 
     public List<String[]> getCsvContent() {
         return csvContent;
@@ -65,44 +64,4 @@ public class Contact {
         this.csvContent.add(contact);
     }
 
-
-
-
-
-
-
-    private List<String[]> transformContent(List<Object> list) {
-        List<String[]> newList = new ArrayList<>();
-        for (Object o : list) {
-            Element element = (Element) o;
-            newList.add(new String[]{element.getTagName(), element.getTextContent()});
-        }
-        return newList;
-    }
-
-    private List<String> writeContent(List<Object> list) {
-        List<String> newList = new ArrayList<>();
-        for (Object o : list) {
-            Element element = (Element) o;
-            newList.add(element.getTagName() + " - " + element.getTextContent() + "\n");
-        }
-        return newList;
-    }
-
-    private List<String> writeCsvContent(List<String[]> list) {
-        List<String> newList = new ArrayList<>();
-        for (String[] o : list) {
-            newList.add(o[0] + " - " + o[1] + "\n");
-        }
-        return newList;
-    }
-
-    @Override
-    public String toString() {
-        return "SimpleContact{" +
-                "content=" +
-//                writeCsvContent(csvContent) +
-                writeContent(content) +
-                '}';
-    }
 }
